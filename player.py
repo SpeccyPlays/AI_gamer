@@ -18,15 +18,17 @@ key_mappings = get_SMB_key_mapping()
 previous_plan = ""
 held_key = None
 jump_release_time = None
+action = None
+enemy_pos = None
 current_time = time.time()
 previous_screenshot = wincap.get_screenshot()
 while True:
     
     if keyboard.is_pressed("esc"):
-        if held_key is not None:
-            pydirectinput.keyUp(held_key)
-            print("Stopping...")
-            break
+        for key in key_mappings.values():
+            pydirectinput.keyUp(key)
+        print("Stopping...")
+        break
     if jump_release_time and time.time() >= jump_release_time:
         pydirectinput.keyUp(key_mappings["JUMP"])
         jump_release_time = None
@@ -38,7 +40,7 @@ while True:
             messages=[
                 {
                     "role": "user",
-                    "content": get_smb_prompt(previous_plan),
+                    "content": get_smb_prompt(previous_plan, action, enemy_pos),
                     "images": [previous_screenshot, current_screenshot],
                 }
             ],
@@ -80,10 +82,7 @@ while True:
         player_loc = data["player_loc"]
         enemy_pos = data["enemy_pos"]
         previous_plan = plan
-        print("The plan is", plan);
-        print("The action is", action)
-        print("The player location is", player_loc)
-        print("Enemy positions", enemy_pos)
+        print("The plan is", plan, " The action is", action, "The player location is", player_loc, "Enemy positions", enemy_pos);
         key = key_mappings[action]
         if action == "JUMP":
             pydirectinput.keyDown(key_mappings["JUMP"])
@@ -93,5 +92,3 @@ while True:
                 pydirectinput.keyUp(held_key)
             pydirectinput.keyDown(key)
             held_key = key
-        
-        print("Key is", key)
