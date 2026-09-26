@@ -77,14 +77,24 @@ def get_smb_prompt(previous_plan):
                     Then choose the action.
 
                     IMPORTANT:
-                    If a Goomba is to the RIGHT of Mario, on the same ground/platform, and Mario is moving toward it, the Goomba is directly in Mario's path.
-                    If a Goomba is directly in Mario's path, choose JUMP.
-                    Do not choose RIGHT in this situation.
+                    If a enemy is to the RIGHT of Mario, on the same ground/platform, and Mario is moving toward it, the enemy is directly in Mario's path.
+                    If a enemy is directly in Mario's path, choose JUMP.
+                    There is control latency so When you see a enemy, choose JUMP
+                    Mario can avoid enemies by jumping on a question mark block or brick block above the enemy
+                    Enemies can be killed by jumping on top of them or landing on top of them from a higher level
+                    
+                    Clouds, bushes, and hills are NOT enemies or obstacles
+
+                    Pipes are obstacles and must be jumped over
+                    Question mark block and brick block are obstacles but can be moved under or jumped on.
+
+                    When falling, you CANNOT jump
 
                     Otherwise:
                     - If the path ahead is clear, choose RIGHT.
                     - If there is a gap or obstacle ahead, choose JUMP.
                     - Choose LEFT only to avoid immediate danger.
+                    - If Mario is no longer moving right he may be stuck behind something. choose JUMP
 
                     Actions:
                     - RIGHT: move right.

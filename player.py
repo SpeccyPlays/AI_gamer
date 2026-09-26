@@ -6,6 +6,7 @@ import json
 from windowcapture import WindowCapture
 from prompts import get_chuckie_egg_prompt, get_chuckie_key_mapping, get_smb_prompt, get_SMB_key_mapping
 
+#Mario cheat code SXIOPO for infinte lives
 #Change below depending on window title
 wincap = WindowCapture('Super Mario Bros. + Duck Hunt (U) [!] [NES] - BizHawk')
 
@@ -16,6 +17,7 @@ key_mappings = get_SMB_key_mapping()
 
 previous_plan = ""
 held_key = None
+jump_release_time = None
 current_time = time.time()
 previous_screenshot = wincap.get_screenshot()
 while True:
@@ -25,12 +27,14 @@ while True:
             pydirectinput.keyUp(held_key)
             print("Stopping...")
             break
-
-    if (time.time() - current_time > 0.01  ):
+    if jump_release_time and time.time() >= jump_release_time:
+        pydirectinput.keyUp(key_mappings["JUMP"])
+        jump_release_time = None
+    if (time.time() - current_time > 0.1):
         current_time = time.time() 
-        current_screenshot = wincap.get_screenshot();
+        current_screenshot = wincap.get_screenshot()
         response = chat(
-            model="qwen3.5:2b",
+            model="qwen3.5:0.8b",
             messages=[
                 {
                     "role": "user",
@@ -81,9 +85,13 @@ while True:
         print("The player location is", player_loc)
         print("Enemy positions", enemy_pos)
         key = key_mappings[action]
-        if key != held_key:
+        if action == "JUMP":
+            pydirectinput.keyDown(key_mappings["JUMP"])
+            jump_release_time = time.time() + 0.5
+        elif key != held_key:
             if held_key is not None:
                 pydirectinput.keyUp(held_key)
             pydirectinput.keyDown(key)
             held_key = key
+        
         print("Key is", key)
