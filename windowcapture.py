@@ -20,7 +20,8 @@ class WindowCapture:
         window_rect = win32gui.GetWindowRect(self.hwnd)
         self.w = window_rect[2] - window_rect[0]
         self.h = window_rect[3] - window_rect[1]
-
+        self.w += 150
+        self.h += 150
 
     def get_screenshot(self):
 
@@ -31,7 +32,14 @@ class WindowCapture:
         dataBitMap = win32ui.CreateBitmap()
         dataBitMap.CreateCompatibleBitmap(dcObj, self.w, self.h)
         cDC.SelectObject(dataBitMap)
-        cDC.BitBlt((0, 0), (self.w, self.h), dcObj, (0,0), win32con.SRCCOPY)
+
+        cDC.BitBlt(
+            (0, 0),
+            (self.w, self.h),
+            dcObj,
+            (0, 0),
+            win32con.SRCCOPY
+        )
 
         # convert the raw data into a format opencv can read
         #dataBitMap.SaveBitmapFile(cDC, 'debug.bmp')
@@ -51,15 +59,6 @@ class WindowCapture:
         win32gui.DeleteObject(dataBitMap.GetHandle())
 
         return png_bytes
-
-    # find the name of the window you're interested in.
-    # once you have it, update window_capture()
-    # https://stackoverflow.com/questions/55547940/how-to-get-a-list-of-the-name-of-every-open-window
-    def list_window_names(self):
-        def winEnumHandler(hwnd, ctx):
-            if win32gui.IsWindowVisible(hwnd):
-                print(hex(hwnd), win32gui.GetWindowText(hwnd))
-        win32gui.EnumWindows(winEnumHandler, None)
 
     def set_foreground_window(self):
         win32gui.SetForegroundWindow(self.hwnd)
