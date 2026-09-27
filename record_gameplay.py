@@ -18,6 +18,11 @@ key_mappings = {
                 "p" : "RIGHT", 
                 "m" : "JUMP", 
             }
+for i in range(3):
+    print(f"Starting in {i+1}")
+    time.sleep(1.0)
+
+print("Starting recording")
 
 while True:
 
