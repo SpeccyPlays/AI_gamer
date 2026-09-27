@@ -25,7 +25,10 @@ from model import MarioCNN
 
 
 # Load our recorded Mario gameplay
-dataset = MarioDataset("saved_actions/2026-09-2714_56_46save.json")
+dataset = MarioDataset([
+    "saved_actions/2026-09-2714_56_46save.json",
+    "saved_actions/2026-09-2716_49_08save.json"
+])
 
 
 train_size = int(0.8 * len(dataset))

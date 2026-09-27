@@ -36,9 +36,13 @@ from torch.utils.data import DataLoader
 
 
 class MarioDataset(Dataset):
-    def __init__(self, json_file):
-        with open(json_file, "r") as f:
-            self.data = json.load(f)
+    def __init__(self, json_files):
+
+        self.data = []
+
+        for json_file in json_files:
+            with open(json_file, "r") as f:
+                self.data.extend(json.load(f))
 
         self.action_to_id = {
             "NONE": 0,

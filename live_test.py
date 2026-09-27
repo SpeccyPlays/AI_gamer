@@ -1,5 +1,7 @@
 import io
 import torch
+import keyboard
+import time
 from PIL import Image
 from torchvision import transforms
 
@@ -23,26 +25,55 @@ id_to_action = {
     3: "JUMP"
 }
 
+action_to_key = {
+    "LEFT": "o",
+    "RIGHT": "p",
+    "JUMP": "m"
+}
+
 capture = WindowCapture(
     "Super Mario Bros. + Duck Hunt (U) [!] [NES] - BizHawk"
 )
 
-png_bytes = capture.get_screenshot()
+for i in range(3):
+    print(f"Starting in {i+1}")
+    time.sleep(1.0)
 
-image = Image.open(io.BytesIO(png_bytes)).convert("RGB")
+print("Playing")
+while True:
 
-image = transform(image)
+    if keyboard.is_pressed("esc"):
+        print("Stopping...")
+        break
 
-image = torch.tensor(
-    np.array(image),
-    dtype=torch.float32
-).permute(2, 0, 1) / 255.0
+    screenshot = capture.get_screenshot()
 
-image = image.unsqueeze(0)
+    image = Image.open(io.BytesIO(screenshot)).convert("RGB")
+    image = transform(image)
+    image = torch.tensor(
+        np.array(image),
+        dtype=torch.float32
+    ).permute(2, 0, 1) / 255.0
 
-with torch.no_grad():
-    predictions = model(image)
+    image = image.unsqueeze(0)
 
-predicted_id = predictions.argmax(dim=1).item()
+    with torch.no_grad():
+        predictions = model(image)
 
-print("Prediction:", id_to_action[predicted_id])
+    probabilities = torch.softmax(predictions, dim=1)[0]
+
+    predicted_id = predictions.argmax(dim=1).item()
+    predicted_action = id_to_action[predicted_id]
+
+    predicted_id = predictions.argmax(dim=1).item()
+    predicted_action = id_to_action[predicted_id]
+
+    if predicted_action in action_to_key:
+        keyboard.press(action_to_key[predicted_action])
+
+    print("\033[2J\033[H", end="")
+
+    for i, probability in enumerate(probabilities):
+        print(f"{id_to_action[i]}: {probability:.2%}")
+
+    time.sleep(0.2)
