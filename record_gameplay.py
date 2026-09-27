@@ -2,7 +2,25 @@ import keyboard
 import time
 import json
 from windowcapture import WindowCapture
+import os
+import sys
 
+os.makedirs("training_data", exist_ok=True)
+
+print("Enter a session name:")
+session_name = input()
+
+duplicate_name = os.path.isdir(f"training_data/{session_name}")
+
+if duplicate_name :
+    while duplicate_name:
+        print("Duplicate session name. Enter a new one or type QUIT to abort:")
+        session_name = input()
+        if session_name == "QUIT":
+            sys.exit("User quit session")
+        duplicate_name = os.path.isdir(f"training_data/{session_name}")
+
+os.makedirs(f"training_data/{session_name}")
 #Mario cheat code SXIOPO for infinte lives
 #Change below depending on window title
 wincap = WindowCapture('Super Mario Bros. + Duck Hunt (U) [!] [NES] - BizHawk')
@@ -35,8 +53,7 @@ while True:
     # Capture immediately when JUMP is newly pressed
     if jump_pressed and not jump_was_pressed:
 
-        timestamp = time.strftime("%Y-%m-%d%H_%M_%S")
-        file_name = f"screenshots/{timestamp}screenshoot{frame_count}.png"
+        file_name = f"training_data/{session_name}/frame_{frame_count:06d}.png"
 
         try:
             with open(file_name, "wb") as f:
@@ -44,7 +61,7 @@ while True:
 
             action_list.append({
                 "id": frame_count,
-                "screenshot": file_name,
+                "screenshot": f"frame_{frame_count:06d}.png",
                 "action": "JUMP"
             })
 
@@ -60,8 +77,7 @@ while True:
 
         current_time = time.time()
 
-        timestamp = time.strftime("%Y-%m-%d%H_%M_%S")
-        file_name = f"screenshots/{timestamp}screenshoot{frame_count}.png"
+        file_name = f"training_data/{session_name}/frame_{frame_count:06d}.png"
 
         try:
             with open(file_name, "wb") as f:
@@ -84,7 +100,6 @@ while True:
 
         frame_count += 1
 
-save_timestamp = time.strftime("%Y-%m-%d%H_%M_%S")
-save_file_name = f"saved_actions/{save_timestamp}save.json"
+save_file_name = f"training_data/{session_name}/actions.json"
 with open(save_file_name , "w") as f:
     json.dump(action_list, f, indent=4)
