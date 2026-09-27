@@ -1,3 +1,34 @@
+"""
+model.py
+
+PURPOSE:
+Defines Mario's neural network (CNN).
+
+INPUT:
+A 128x128 RGB screenshot.
+
+Input shape:
+    [3, 128, 128]
+
+The CNN processes the screenshot through:
+    - Convolutional layers
+    - ReLU activation
+    - Max pooling
+    - Linear layers
+
+OUTPUT:
+4 numbers representing the model's prediction for each action:
+
+    0 = NONE
+    1 = LEFT
+    2 = RIGHT
+    3 = JUMP
+
+The model starts with random weights.
+Training will adjust those weights so the predictions
+become better at matching our recorded gameplay.
+"""
+
 import torch.nn as nn
 
 class MarioCNN(nn.Module):
