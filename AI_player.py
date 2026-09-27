@@ -29,9 +29,6 @@ while True:
             pydirectinput.keyUp(key)
         print("Stopping...")
         break
-    if jump_release_time and time.time() >= jump_release_time:
-        pydirectinput.keyUp(key_mappings["JUMP"])
-        jump_release_time = None
     if (time.time() - current_time > 0.1):
         current_time = time.time() 
         current_screenshot = wincap.get_screenshot()
