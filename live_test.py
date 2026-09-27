@@ -39,7 +39,10 @@ for i in range(3):
     print(f"Starting in {i+1}")
     time.sleep(1.0)
 
+current_key = None
+
 print("Playing")
+
 while True:
 
     if keyboard.is_pressed("esc"):
@@ -65,11 +68,17 @@ while True:
     predicted_id = predictions.argmax(dim=1).item()
     predicted_action = id_to_action[predicted_id]
 
-    predicted_id = predictions.argmax(dim=1).item()
-    predicted_action = id_to_action[predicted_id]
+    new_key = action_to_key.get(predicted_action)
 
-    if predicted_action in action_to_key:
-        keyboard.press(action_to_key[predicted_action])
+    if new_key != current_key:
+
+        if current_key is not None:
+            keyboard.release(current_key)
+
+        if new_key is not None:
+            keyboard.press(new_key)
+
+        current_key = new_key
 
     print("\033[2J\033[H", end="")
 
