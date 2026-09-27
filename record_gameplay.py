@@ -24,7 +24,7 @@ while True:
             print("Stopping...")
             break
     
-    if (time.time() - current_time > 0.5):
+    if (time.time() - current_time > 0.1):
         current_time = time.time()
 
         timestamp = time.strftime("%Y-%m-%d%H_%M_%S")
