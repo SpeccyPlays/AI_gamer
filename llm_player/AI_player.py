@@ -4,7 +4,7 @@ from ollama import chat
 import pydirectinput
 import json
 from windowcapture import WindowCapture
-from prompts import get_chuckie_egg_prompt, get_chuckie_key_mapping, get_smb_prompt, get_SMB_key_mapping
+from llm_player.prompts import get_chuckie_egg_prompt, get_chuckie_key_mapping, get_smb_prompt, get_SMB_key_mapping
 
 #Mario cheat code SXIOPO for infinte lives
 #Change below depending on window title
