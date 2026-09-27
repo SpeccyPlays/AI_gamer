@@ -27,9 +27,17 @@ from model import MarioCNN
 # Load our recorded Mario gameplay
 dataset = MarioDataset([
     "saved_actions/2026-09-2714_56_46save.json",
-    "saved_actions/2026-09-2716_49_08save.json"
+    "saved_actions/2026-09-2716_49_08save.json",
+    "saved_actions/2026-09-2717_30_51save.json",
+    "saved_actions/2026-09-2717_31_47save.json",
+    "saved_actions/2026-09-2718_10_59save.json"
 ])
 
+from collections import Counter
+
+counts = Counter(item["action"] for item in dataset.data)
+
+print(counts)
 
 train_size = int(0.8 * len(dataset))
 validation_size = len(dataset) - train_size
@@ -50,7 +58,7 @@ train_loader = DataLoader(
 model = MarioCNN()
 
 # Loss function - add weight for jumping
-loss_function = nn.CrossEntropyLoss(weight=torch.tensor([1.0, 1.0, 1.0, 6.0]))
+loss_function = nn.CrossEntropyLoss(weight=torch.tensor([1.0, 1.0, 1.0, 10.0]))
 
 # Optimizer
 optimizer = torch.optim.Adam(
@@ -121,11 +129,13 @@ accuracy = correct / total
 
 print(f"Validation Accuracy: {accuracy:.2%}")
 
-print("\nConfusion Matrix:")
-print(confusion_matrix)
+print("\nConfusion Matrix")
+print("================")
+print("             Predicted")
+print("             NONE  LEFT  RIGHT  JUMP")
+print("Actual NONE   ", confusion_matrix[0].tolist())
+print("       LEFT   ", confusion_matrix[1].tolist())
+print("       RIGHT  ", confusion_matrix[2].tolist())
+print("       JUMP   ", confusion_matrix[3].tolist())
 
-print("\nRows = Actual")
-print("Columns = Predicted")
-print("Order = NONE, LEFT, RIGHT, JUMP")
-
-torch.save(model.state_dict(), "mario_model.pth")
+torch.save(model.state_dict(), "mario_mega_model.pth")

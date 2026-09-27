@@ -11,7 +11,7 @@ from windowcapture import WindowCapture
 import numpy as np
 
 model = MarioCNN()
-model.load_state_dict(torch.load("mario_model.pth"))
+model.load_state_dict(torch.load("mario_mega_model.pth"))
 model.eval()
 
 transform = transforms.Compose([
@@ -31,6 +31,8 @@ action_to_key = {
     "JUMP": "m"
 }
 
+jump_release_time = None
+
 capture = WindowCapture(
     "Super Mario Bros. + Duck Hunt (U) [!] [NES] - BizHawk"
 )
@@ -48,7 +50,8 @@ while True:
     if keyboard.is_pressed("esc"):
         print("Stopping...")
         break
-
+    if (jump_release_time is not None and time.time() - jump_release_time > 1.0):
+        keyboard.release(action_to_key["JUMP"])
     screenshot = capture.get_screenshot()
 
     image = Image.open(io.BytesIO(screenshot)).convert("RGB")
@@ -70,7 +73,11 @@ while True:
 
     new_key = action_to_key.get(predicted_action)
 
-    if new_key != current_key:
+    if predicted_action == "JUMP":
+        jump_release_time = time.time()
+        keyboard.press(action_to_key["JUMP"])
+
+    elif new_key != current_key:
 
         if current_key is not None:
             keyboard.release(current_key)
@@ -86,3 +93,6 @@ while True:
         print(f"{id_to_action[i]}: {probability:.2%}")
 
     time.sleep(0.2)
+
+for key in action_to_key.values():
+    keyboard.release(key)
