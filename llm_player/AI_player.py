@@ -1,19 +1,17 @@
 import keyboard
 import time
+import os
 from ollama import chat
 import pydirectinput
 import json
-from windowcapture import WindowCapture
-from llm_player.prompts import get_chuckie_egg_prompt, get_chuckie_key_mapping, get_smb_prompt, get_SMB_key_mapping
+from ai_window_capture import WindowCapture
+from prompts import get_chuckie_egg_prompt, get_chuckie_key_mapping, get_smb_prompt, get_SMB_key_mapping, get_pacman_key_mapping, get_pacman_prompt
 
 #Mario cheat code SXIOPO for infinte lives
 #Change below depending on window title
-wincap = WindowCapture('Super Mario Bros. + Duck Hunt (U) [!] [NES] - BizHawk')
-
-with open("ollama_test.png", "wb") as f:
-    f.write(wincap.get_screenshot())
+wincap = WindowCapture('Pac-Man (Europe) [NES] - BizHawk')
     
-key_mappings = get_SMB_key_mapping()
+key_mappings = get_pacman_key_mapping()
 
 previous_plan = ""
 held_key = None
@@ -22,23 +20,36 @@ action = None
 enemy_pos = None
 current_time = time.time()
 previous_screenshot = wincap.get_screenshot()
+current_screenshot = None
+
+screenshots = []
+screenshots.append(previous_screenshot)
+
 while True:
     
     if keyboard.is_pressed("esc"):
         for key in key_mappings.values():
             pydirectinput.keyUp(key)
         print("Stopping...")
+
+        for idx, item in enumerate(screenshots):
+            with open (os.path.join("llm_player", f"{idx}.png"), "wb") as file:
+                file.write(item)
+
         break
+    if len(screenshots) >= 3:
+        screenshots.pop(0)
     if (time.time() - current_time > 0.1):
         current_time = time.time() 
         current_screenshot = wincap.get_screenshot()
+        screenshots.append(current_screenshot)
         response = chat(
             model="qwen3.5:0.8b",
             messages=[
                 {
                     "role": "user",
-                    "content": get_smb_prompt(previous_plan, action, enemy_pos),
-                    "images": [previous_screenshot, current_screenshot],
+                    "content": get_pacman_prompt(previous_plan, action, enemy_pos),
+                    "images": screenshots,
                 }
             ],
             think=False,
@@ -47,7 +58,7 @@ while True:
                 "properties": {
                     "action": {
                         "type": "string",
-                        "enum": ["LEFT", "RIGHT", "JUMP"]
+                        "enum": ["LEFT", "RIGHT", "UP", "DOWN"]
                     },
                     "plan" : {
                         "type": "string",
@@ -79,7 +90,8 @@ while True:
         player_loc = data["player_loc"]
         enemy_pos = data["enemy_pos"]
         previous_plan = plan
-        print("The plan is", plan, " The action is", action, "The player location is", player_loc, "Enemy positions", enemy_pos);
+        print("The plan is", plan) 
+        print("The action is", action)
         key = key_mappings[action]
         if action == "JUMP":
             pydirectinput.keyDown(key_mappings["JUMP"])
@@ -87,5 +99,5 @@ while True:
         elif key != held_key:
             if held_key is not None:
                 pydirectinput.keyUp(held_key)
-            pydirectinput.keyDown(key)
+            pydirectinput.press(key)
             held_key = key
