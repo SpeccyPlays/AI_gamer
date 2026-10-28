@@ -2,6 +2,20 @@ import numpy as np
 import win32gui, win32ui, win32con
 import cv2
 
+def get_window_title_dict():
+    
+    def _call_back(hwnd, extra):
+        if win32gui.IsWindowVisible(hwnd):
+            hwnds, classes = extra
+            hwnds.append(hwnd)
+            if win32gui.GetWindowText(hwnd) != "":
+                classes.append(win32gui.GetWindowText(hwnd))
+    windows = []
+    classes = []
+    win32gui.EnumWindows(_call_back, (windows, classes))
+    my_dict = dict(enumerate(classes))
+    return my_dict
+
 class WindowCapture:
 
     # properties

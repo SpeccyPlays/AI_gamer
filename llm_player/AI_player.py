@@ -4,12 +4,35 @@ import os
 from ollama import chat
 import pydirectinput
 import json
-from ai_window_capture import WindowCapture
+from ai_window_capture import WindowCapture, get_window_title_dict
 from prompts import get_chuckie_egg_prompt, get_chuckie_key_mapping, get_smb_prompt, get_SMB_key_mapping, get_pacman_key_mapping, get_pacman_prompt
 
 #Mario cheat code SXIOPO for infinte lives
 #Change below depending on window title
-wincap = WindowCapture('Pac-Man (Europe) [NES] - BizHawk')
+window_titles = get_window_title_dict()
+print(get_window_title_dict())
+def print_menu(titles):
+    for idx, title in window_titles.items():
+        print(idx, "-", title)
+    print("Select a window to use or type q to exit")
+print_menu(window_titles)
+valid_choice = False
+title = ""
+
+while not valid_choice:
+    choice = input("Select a window: ")
+
+    if choice.lower() == "q":
+        break
+    elif window_titles[int(choice)]:
+        title = window_titles[int(choice)]
+        valid_choice = True
+    else:
+        print("Incorrect option")
+        print_menu(window_titles)
+if not valid_choice:
+    raise SystemExit
+wincap = WindowCapture(title)
     
 key_mappings = get_pacman_key_mapping()
 
@@ -58,7 +81,7 @@ while True:
                 "properties": {
                     "action": {
                         "type": "string",
-                        "enum": ["LEFT", "RIGHT", "UP", "DOWN"]
+                        "enum": list(key_mappings)
                     },
                     "plan" : {
                         "type": "string",
