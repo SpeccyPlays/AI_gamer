@@ -1,6 +1,8 @@
 import keyboard
 import time
 import os
+from players.smb_player import SuperMario
+
 from ollama import chat
 import pydirectinput
 import json
@@ -19,6 +21,8 @@ print_menu(window_titles)
 valid_choice = False
 title = ""
 
+player = SuperMario()
+
 while not valid_choice:
     choice = input("Select a window: ")
 
@@ -34,7 +38,7 @@ if not valid_choice:
     raise SystemExit
 wincap = WindowCapture(title)
     
-key_mappings = get_SMB_key_mapping()
+key_mappings = player.get_key_mapping()
 
 previous_plan = ""
 held_key = None
@@ -71,7 +75,7 @@ while True:
             messages=[
                 {
                     "role": "user",
-                    "content": get_smb_prompt(previous_plan, action, enemy_pos),
+                    "content": player.get_prompt(previous_plan, action, enemy_pos),
                     "images": screenshots,
                 }
             ],
