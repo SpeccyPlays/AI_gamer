@@ -32,7 +32,7 @@ class WindowCapture:
 
         # get the window size
         window_rect = win32gui.GetWindowRect(self.hwnd)
-        self.w = window_rect[2] - window_rect[0]
+        self.w = window_rect[2] - window_rect[0] + 150
         self.h = window_rect[3] - window_rect[1] + 150
 
 

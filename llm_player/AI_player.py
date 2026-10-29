@@ -2,12 +2,12 @@ import keyboard
 import time
 import os
 from players.smb_player import SuperMario
+from players.bubble_bobble_player import BubbleBobble
 
 from ollama import chat
 import pydirectinput
 import json
 from ai_window_capture import WindowCapture, get_window_title_dict
-from prompts import get_chuckie_egg_prompt, get_chuckie_key_mapping, get_smb_prompt, get_SMB_key_mapping, get_pacman_key_mapping, get_pacman_prompt
 
 #Mario cheat code SXIOPO for infinte lives
 
@@ -21,7 +21,7 @@ print_menu(window_titles)
 valid_choice = False
 title = ""
 
-player = SuperMario()
+player = BubbleBobble()
 
 while not valid_choice:
     choice = input("Select a window: ")
@@ -64,7 +64,7 @@ while True:
                 file.write(item)
 
         break
-    if len(screenshots) > 3:
+    if len(screenshots) >= 3:
         screenshots.pop(0)
     if (time.time() - current_time > 0.1):
         current_time = time.time() 
@@ -122,7 +122,7 @@ while True:
         key = key_mappings[action]
         wincap.set_foreground()
         if action == "JUMP":
-            pydirectinput.keyDown(key_mappings["JUMP"])
+            pydirectinput.press(key_mappings["JUMP"])
             jump_release_time = time.time() + 0.5
         elif key != held_key:
             if held_key is not None:
