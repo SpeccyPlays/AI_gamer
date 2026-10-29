@@ -74,10 +74,9 @@ def get_smb_prompt(previous_plan, action, enemy_pos):
 
                     Goal: complete the level by moving right.
 
-                    The first image is the previous frame.
-                    The second image is the current frame.
+                    You will receive a series of screen frames, from oldest to newest.
 
-                    Compare the two frames carefully.
+                    Compare the frames carefully.
 
                     First determine:
                     - Mario's current position.

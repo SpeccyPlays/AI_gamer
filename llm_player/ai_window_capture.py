@@ -65,7 +65,9 @@ class WindowCapture:
         win32gui.DeleteObject(dataBitMap.GetHandle())
 
         return png_bytes
-
+    
+    def set_foreground(self):
+        win32gui.SetForegroundWindow(self.hwnd)
     # find the name of the window you're interested in.
     # once you have it, update window_capture()
     # https://stackoverflow.com/questions/55547940/how-to-get-a-list-of-the-name-of-every-open-window

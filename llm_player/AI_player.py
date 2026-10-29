@@ -8,7 +8,7 @@ from ai_window_capture import WindowCapture, get_window_title_dict
 from prompts import get_chuckie_egg_prompt, get_chuckie_key_mapping, get_smb_prompt, get_SMB_key_mapping, get_pacman_key_mapping, get_pacman_prompt
 
 #Mario cheat code SXIOPO for infinte lives
-#Change below depending on window title
+
 window_titles = get_window_title_dict()
 print(get_window_title_dict())
 def print_menu(titles):
@@ -34,7 +34,7 @@ if not valid_choice:
     raise SystemExit
 wincap = WindowCapture(title)
     
-key_mappings = get_pacman_key_mapping()
+key_mappings = get_SMB_key_mapping()
 
 previous_plan = ""
 held_key = None
@@ -60,7 +60,7 @@ while True:
                 file.write(item)
 
         break
-    if len(screenshots) >= 3:
+    if len(screenshots) > 3:
         screenshots.pop(0)
     if (time.time() - current_time > 0.1):
         current_time = time.time() 
@@ -71,7 +71,7 @@ while True:
             messages=[
                 {
                     "role": "user",
-                    "content": get_pacman_prompt(previous_plan, action, enemy_pos),
+                    "content": get_smb_prompt(previous_plan, action, enemy_pos),
                     "images": screenshots,
                 }
             ],
@@ -94,8 +94,8 @@ while True:
                     }
                 },
                 "required": ["action", "plan", "player_loc", "enemy_pos"]
-            }
-
+            },
+            options={"num_ctx": 4096}
         )
         print("Ollama call took", time.time() - current_time)
         content = response.message.content
@@ -116,11 +116,12 @@ while True:
         print("The plan is", plan) 
         print("The action is", action)
         key = key_mappings[action]
+        wincap.set_foreground()
         if action == "JUMP":
             pydirectinput.keyDown(key_mappings["JUMP"])
             jump_release_time = time.time() + 0.5
         elif key != held_key:
             if held_key is not None:
                 pydirectinput.keyUp(held_key)
-            pydirectinput.press(key)
+            pydirectinput.keyDown(key)
             held_key = key
